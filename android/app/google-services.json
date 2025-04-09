@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "883311338491",
+    "project_id": "ai-resume-screening-syst-e7924",
+    "storage_bucket": "ai-resume-screening-syst-e7924.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883311338491:android:e65a1d280535fc6d71a15e",
+        "android_client_info": {
+          "package_name": "com.example.resume_screening_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEe3aDyx5BIIvQKpChNMtEOxyn0J9NxsQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
