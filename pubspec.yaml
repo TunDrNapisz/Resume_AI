@@ -40,7 +40,13 @@ dependencies:
   firebase_core: ^2.27.0
   firebase_auth: ^4.17.8
   quickalert: ^1.1.0
-  
+  image_picker: ^1.0.8 
+  file_picker: '^8.0.0+1'
+  flutter_pdfview: ^1.0.0
+  flutter_speed_dial: ^7.0.0
+  pie_chart: ^5.4.0
+  supabase_flutter: ^2.8.4
+
 
 dev_dependencies:
   flutter_test:
