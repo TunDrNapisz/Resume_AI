@@ -9,7 +9,8 @@ import 'package:resume_screening_system/components/my_button.dart';
 import 'package:resume_screening_system/components/my_textfield.dart';
 
 class RecruiterLogin extends StatefulWidget {
-  const RecruiterLogin({super.key});
+  final void Function()? onTap;
+  RecruiterLogin({super.key, required this.onTap});
 
   @override
   State<RecruiterLogin> createState() => _RecruiterLoginState();
@@ -104,6 +105,36 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
                   ),
                   SizedBox(height: 25),
                   MyButton(text: "Login", onTap: login),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/newPswd');
+                        },
+                        child: Text(
+                          "Forgot Password?",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
+                  GestureDetector(
+                    onTap: widget.onTap,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have any account?"),
+                        Text(" Register here.",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ))
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

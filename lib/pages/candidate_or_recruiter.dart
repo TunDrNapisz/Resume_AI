@@ -42,7 +42,7 @@ class CandidateOrRecruiter extends StatelessWidget {
             MyButton(
               text: "Recruiter Login", 
               onTap: (){
-               Navigator.pushNamed(context, "/recruiter_login_page");
+               Navigator.pushNamed(context, "/login_or_register_page");
             }),
           ],
         ),

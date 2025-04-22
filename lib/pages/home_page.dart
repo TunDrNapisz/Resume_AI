@@ -64,6 +64,17 @@ class _FloatingButtonMenuState extends State<FloatingButtonMenu> {
             }
           },
         ),
+         SpeedDialChild(
+          child: const Icon(Icons.edit_document),
+          label: 'Preference Management',
+          onTap: () {
+            try {
+              Navigator.pushNamed(context, '/job_list_page');
+            } catch (error) {
+              print("Error navigating to /job_list_page': $error");
+            }
+          },
+        ),
         SpeedDialChild(
           child: Icon(Icons.work),
           onTap: () {

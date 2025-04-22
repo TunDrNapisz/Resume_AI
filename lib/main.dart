@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:resume_screening_system/auth/auth.dart';
+import 'package:resume_screening_system/auth/login_or_register_page.dart';
+import 'package:resume_screening_system/auth/reset_pswd.dart';
 import 'package:resume_screening_system/firebase_options.dart';
 import 'package:resume_screening_system/pages/candidate_or_recruiter.dart';
 import 'package:resume_screening_system/pages/new_resume_page.dart';
-import 'package:resume_screening_system/pages/recruiter_login_page.dart';
 import 'package:resume_screening_system/pages/result_tracking_page.dart';
 import 'package:resume_screening_system/theme/main_theme.dart';
 import 'package:sizer/sizer.dart';
@@ -40,7 +41,8 @@ class MyApp extends StatelessWidget {
                 const CandidateOrRecruiter(),
             '/new_resume_page': (context) => const NewResume(),
             '/result_tracking_page': (context) => const ResultTracking(),
-            '/recruiter_login_page': (context) => const RecruiterLogin(),
+            '/login_or_register_page': (context) => const LoginOrRegister(),
+            '/newPswd': (context) => ResetPswd(),
           },
         );
       },
