@@ -3,23 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:resume_screening_system/auth/auth.dart';
 import 'package:resume_screening_system/firebase_options.dart';
 import 'package:resume_screening_system/pages/candidate_or_recruiter.dart';
+import 'package:resume_screening_system/pages/job_details.dart';
 import 'package:resume_screening_system/pages/new_resume_page.dart';
 import 'package:resume_screening_system/pages/recruiter_login_page.dart';
 import 'package:resume_screening_system/pages/result_tracking_page.dart';
+import 'package:resume_screening_system/pages/add_job.dart';
+import 'package:resume_screening_system/pages/job_list.dart';
+import 'package:resume_screening_system/pages/update_job.dart';
+import 'package:resume_screening_system/pages/chatbot_page.dart'; // ✅ Chatbot page import
 import 'package:resume_screening_system/theme/main_theme.dart';
 import 'package:sizer/sizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
-  //firebase login setup
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  //
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   await Supabase.initialize(
-      anonKey:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrenh0ZWRlbmNtZ21wZGtpZGtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyNzIyNTcsImV4cCI6MjA1OTg0ODI1N30.ZqQNRsuh_zrYp57ZuiPXFRf2qscw8QLm4ufpQ3xx8l4",
-      url: "https://pkzxtedencmgmpdkidks.supabase.co");
+    anonKey: "your_supabase_anon_key",
+    url: "your_supabase_url",
+  );
 
   runApp(const MyApp());
 }
@@ -36,11 +42,24 @@ class MyApp extends StatelessWidget {
           home: const AuthPage(),
           theme: mainThemeColor,
           routes: {
-            '/candidate_recruiter_page': (context) =>
-                const CandidateOrRecruiter(),
+            '/candidate_recruiter_page': (context) => const CandidateOrRecruiter(),
             '/new_resume_page': (context) => const NewResume(),
             '/result_tracking_page': (context) => const ResultTracking(),
             '/recruiter_login_page': (context) => const RecruiterLogin(),
+            '/add_job': (context) => AddJobPage(),
+            '/job_list': (context) => const JobListPage(),
+            '/job_details': (context) {
+              final jobData = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              return JobDetailsPage(jobData: jobData);
+            },
+            '/update_job': (context) {
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              return UpdateJob(
+                jobId: args['id'],
+                jobData: args['data'],
+              );
+            },
+            '/chatbot': (context) => ChatbotPage(), // ✅ Chatbot route
           },
         );
       },
