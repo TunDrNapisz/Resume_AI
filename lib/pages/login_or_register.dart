@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:resume_screening_system/auth/auth.dart';
-import 'package:resume_screening_system/pages/register_page.dart';
+import 'package:resume_screening_system/pages/recruiter_register_page.dart';
+import 'package:resume_screening_system/pages/register_page.dart'; // Gantilah dengan import yang benar jika perlu
 
 class RecruiterLogin extends StatefulWidget {
-  const RecruiterLogin({super.key});
+  final VoidCallback onTap;
+
+  const RecruiterLogin({super.key, required this.onTap});
 
   @override
   State<RecruiterLogin> createState() => _RecruiterLoginState();
@@ -20,7 +23,7 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
 
   void login() async {
     if (_formKey.currentState!.validate()) {
-      // Show loading
+      // Show loading dialog
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -28,6 +31,7 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
       );
 
       try {
+        // Attempt login
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
@@ -93,6 +97,7 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
                   key: _formKey,
                   child: Column(
                     children: [
+                      // Email Field
                       TextFormField(
                         controller: emailController,
                         decoration: const InputDecoration(
@@ -103,6 +108,7 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
                         validator: (val) => val!.isEmpty ? 'Enter your email' : null,
                       ),
                       const SizedBox(height: 16),
+                      // Password Field
                       TextFormField(
                         controller: passwordController,
                         obscureText: true,
@@ -114,6 +120,7 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
                         validator: (val) => val!.isEmpty ? 'Enter your password' : null,
                       ),
                       const SizedBox(height: 12),
+                      // Remember Me and Forgot Password
                       Row(
                         children: [
                           Checkbox(
@@ -128,13 +135,14 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
                           const Spacer(),
                           TextButton(
                             onPressed: () {
-                              // TODO: implement forgot password
+                              // TODO: implement forgot password functionality
                             },
                             child: const Text('Forgot Password?'),
                           ),
                         ],
                       ),
                       const SizedBox(height: 24),
+                      // Login Button
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -152,30 +160,22 @@ class _RecruiterLoginState extends State<RecruiterLogin> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Don't have an account? "),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const RegisterPage(),
-
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              "Register",
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                      const SizedBox(height: 12),
+                      // Register Link
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to recruiter registration page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const RegisterPage()),
+                          );
+                        },
+                        child: Text(
+                          "Don't have an account? Register",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),

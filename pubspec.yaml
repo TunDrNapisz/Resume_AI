@@ -54,7 +54,8 @@ dependencies:
   flutter_linkify: ^6.0.0
   url_launcher: ^6.2.5
   lucide_icons: ^0.257.0
-
+  riverpod: ^2.6.1
+  flutter_spinkit: ^5.2.1
 
 dev_dependencies:
   flutter_test:

@@ -2,19 +2,33 @@ import 'package:flutter/material.dart';
 import 'sendMessageToAPI.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:lucide_icons/lucide_icons.dart'; // Import Lucide Icons
+import 'package:lucide_icons/lucide_icons.dart'; // Lucide Icons
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({Key? key}) : super(key: key);
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final List<Map<String, String>> _messages = [];
   bool _isLoading = false;
 
-  // Function to send user message to the API
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
   void _sendMessage() async {
     String message = _controller.text.trim();
     if (message.isEmpty) return;
@@ -25,6 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     _controller.clear();
+    _scrollToBottom();
 
     var response = await SendMessageToAPI.sendMessage(message);
 
@@ -34,7 +49,6 @@ class _ChatScreenState extends State<ChatScreen> {
         "content": response['message'] ?? 'No response from bot.',
       });
 
-      // Display job status if available
       if (response.containsKey('jobStatus')) {
         _messages.add({
           "role": "bot",
@@ -44,9 +58,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
       _isLoading = false;
     });
+
+    _scrollToBottom();
   }
 
-  // Function to add a new job
   void _addJob() async {
     setState(() => _isLoading = true);
     var response = await SendMessageToAPI.addJob();
@@ -57,9 +72,9 @@ class _ChatScreenState extends State<ChatScreen> {
       });
       _isLoading = false;
     });
+    _scrollToBottom();
   }
 
-  // Function to update an existing job
   void _updateJob() async {
     setState(() => _isLoading = true);
     var response = await SendMessageToAPI.updateJob();
@@ -70,9 +85,9 @@ class _ChatScreenState extends State<ChatScreen> {
       });
       _isLoading = false;
     });
+    _scrollToBottom();
   }
 
-  // Function to delete a job
   void _deleteJob() async {
     setState(() => _isLoading = true);
     var response = await SendMessageToAPI.deleteJob();
@@ -83,6 +98,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
       _isLoading = false;
     });
+    _scrollToBottom();
   }
 
   Future<void> _onOpenLink(LinkableElement link) async {
@@ -94,19 +110,10 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  // Function to display the message bubble with icons
   Widget _buildMessageBubble(Map<String, String> message) {
     bool isUser = message["role"] == "user";
-    IconData icon;
-    Color iconColor;
-
-    if (message["role"] == "user") {
-      icon = LucideIcons.user; // User icon
-      iconColor = Colors.blue;
-    } else {
-      icon = LucideIcons.briefcase; // Bot icon (Example)
-      iconColor = Colors.teal;
-    }
+    IconData icon = isUser ? LucideIcons.user : LucideIcons.briefcase;
+    Color iconColor = isUser ? Colors.blue : Colors.teal;
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -156,11 +163,11 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  reverse: true,
+                  controller: _scrollController,
+                  reverse: false,
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
-                    final message = _messages[_messages.length - 1 - index];
-                    return _buildMessageBubble(message);
+                    return _buildMessageBubble(_messages[index]);
                   },
                 ),
               ),
@@ -193,33 +200,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
-              Divider(height: 1),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Wrap(
-                  spacing: 10,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: _addJob,
-                      icon: Icon(Icons.add),
-                      label: Text('Add Job'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: _updateJob,
-                      icon: Icon(Icons.edit),
-                      label: Text('Update Job'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: _deleteJob,
-                      icon: Icon(Icons.delete),
-                      label: Text('Delete Job'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
           if (_isLoading)
@@ -231,4 +211,3 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
- 

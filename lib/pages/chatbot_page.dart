@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'sendMessageToAPI.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class ChatbotPage extends StatefulWidget {
   @override
@@ -46,7 +47,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
     switch (intent) {
       case "add_job":
-        await _createJob(jobData); // Pass jobData directly to create job
+        await _createJob(jobData);
         break;
       case "update":
         if (jobId.isEmpty) {
@@ -78,10 +79,6 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
   Future<void> _createJob(Map<String, dynamic> jobData) async {
     try {
-      // Checking job data
-      print("Job Data before creating: $jobData");
-
-      // Ensure all required fields are present
       if (jobData['job_title'] == null || jobData['location'] == null || jobData['job_type'] == null) {
         Fluttertoast.showToast(msg: "Missing required job fields.");
         return;
@@ -172,11 +169,52 @@ class _ChatbotPageState extends State<ChatbotPage> {
     super.dispose();
   }
 
+  Widget _buildChatBubble(Map<String, String> message) {
+    final isUser = message["role"] == "user";
+    final icon = isUser ? LucideIcons.user : LucideIcons.bot;
+
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        decoration: BoxDecoration(
+          color: isUser ? Colors.teal : Colors.grey[200],
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 18, color: isUser ? Colors.white : Colors.teal),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                message["content"] ?? '',
+                style: TextStyle(
+                  color: isUser ? Colors.white : Colors.black87,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('AI Chatbot', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('AI Chatbot', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.teal,
       ),
       body: Stack(
@@ -186,38 +224,11 @@ class _ChatbotPageState extends State<ChatbotPage> {
               Expanded(
                 child: ListView.builder(
                   reverse: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.all(12),
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
                     final message = _messages[_messages.length - 1 - index];
-                    final isUser = message["role"] == "user";
-
-                    return Align(
-                      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 4),
-                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                          decoration: BoxDecoration(
-                            color: isUser ? Colors.teal : Colors.grey[300],
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              topRight: Radius.circular(16),
-                              bottomLeft: Radius.circular(isUser ? 16 : 0),
-                              bottomRight: Radius.circular(isUser ? 0 : 16),
-                            ),
-                          ),
-                          child: Text(
-                            message["content"] ?? '',
-                            style: TextStyle(
-                              color: isUser ? Colors.white : Colors.black87,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
+                    return _buildChatBubble(message);
                   },
                 ),
               ),
@@ -239,7 +250,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.send, color: Colors.teal),
+                      icon: const Icon(Icons.send, color: Colors.teal),
                       onPressed: _sendMessage,
                     ),
                   ],
@@ -248,7 +259,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
             ],
           ),
           if (_isLoading)
-            Center(
+            const Center(
               child: CircularProgressIndicator(),
             ),
         ],

@@ -58,18 +58,36 @@ def search_web(query):
         results = res.json().get("items", [])
 
         if results:
-            top_results = results[:3]
-            response = "🔎 **Search Results:**\n\n"
-            for i, item in enumerate(top_results, 1):
-                title = item.get("title", "No Title")
-                snippet = item.get("snippet", "").strip().rstrip("…")
-                link = item.get("link", "")  # <--- penting
-                response += f"**{i}. {title}**\n📝 {snippet}\n🔗 {link}\n\n"  # <--- tambah link
+            top_result = results[0]  # Get only the top result
+            title = top_result.get("title", "No Title")
+            snippet = top_result.get("snippet", "").strip()
+            link = top_result.get("link", "")
+
+            # Remove "..." if present at the end of snippet
+            if snippet.endswith("..."):
+                snippet = snippet[:-3].strip()
+
+            # Add a closing sentence if the snippet is incomplete
+            if not snippet.endswith("."):
+                snippet += " (click the link below for full details)."
+
+            response = f"🔎 **{title}**\n"
+            response += f"📝 {snippet}\n"
+            response += f"🔗 {link}\n\n"
+            response += (
+                "💡 **AI Reasoning:** This answer was selected based on the most relevant and concise result retrieved using Google's Custom Search. "
+                "To keep the conversation clear and easy to follow, the AI shows only the top result. "
+                "For complete details, please visit the link provided."
+            )
+
             return response.strip()
+
         return "❌ Sorry, no relevant results were found."
+
     except Exception as e:
         print("Search Error:", e)
         return "⚠️ An error occurred while searching. Please try again later."
+
 
 
 
@@ -171,11 +189,106 @@ def chat():
             response_message = "❎ Delete operation cancelled."
             return jsonify({"message": response_message, "intent": "cancel", "job_data": {}})
 
+    user_lower = user_message.lower()
 
-    if re.search(r"\b(hi|hello|hai|hey|good morning|good evening)\b", user_message.lower()):
+    # Greeting
+    if re.search(r"\b(hi|hello|hai|hey|good morning|good evening)\b", user_lower):
         response_message = "Hello! How can I assist you with your job requests?"
         session_memory[session_id] = {}
         return jsonify({"message": response_message, "intent": "greeting", "job_data": {}})
+
+    # Other small talk and bot personality
+    if any(greet in user_lower for greet in ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"]):
+        return jsonify({"message": "Hello! How can I assist you today? 😊"})
+    if "how are you" in user_lower:
+        return jsonify({"message": "I'm just a bot, but I'm doing great! How can I help you today?"})
+    if any(farewell in user_lower for farewell in ["bye", "goodbye", "see you"]):
+        return jsonify({"message": "Goodbye! Have a nice day 👋"})
+    if any(thanks in user_lower for thanks in ["thank you", "thanks"]):
+        return jsonify({"message": "You're welcome! Let me know if you need anything else."})
+    if "are you there" in user_lower:
+        return jsonify({"message": "Yes, I'm here to help!"})
+    if "what can you do" in user_lower:
+        return jsonify({
+                           "message": "I can help you manage jobs — create, view, update, or delete job listings. Just let me know what you want to do."})
+    if "who are you" in user_lower:
+        return jsonify({"message": "I'm your HR assistant chatbot 🤖, ready to help you with job-related tasks."})
+
+    # === AI / Teknologi Related ===
+    if "are you a human" in lower_msg:
+        return jsonify({"message": "I'm not a human — I'm your AI assistant 🤖 here to help you manage job tasks!"})
+
+    if "do you understand me" in lower_msg:
+        return jsonify({"message": "Yes, I understand your requests and I'm here to help!"})
+
+    if "can you learn from me" in lower_msg:
+        return jsonify({
+                           "message": "I don't learn from personal interactions, but I'm designed to assist you based on patterns and logic."})
+
+    if "what language do you speak" in lower_msg:
+        return jsonify(
+            {"message": "I understand and respond in English and Malay for now. Let me know how I can help!"})
+
+    # === Masa & Kebolehcapaian ===
+    if "are you available 24/7" in lower_msg or "can i talk to you anytime" in lower_msg:
+        return jsonify({"message": "Yes! I'm available 24/7 to assist you with job-related tasks. 🌐"})
+
+    if "when are you active" in lower_msg:
+        return jsonify({"message": "I'm always active — feel free to chat with me anytime!"})
+    # Detect user intent (based on previous logic or NLP function)
+    intent = detect_intent(user_message)
+
+    if "tell me a joke" in user_message.lower() or "say something funny" in user_message.lower():
+        jokes = [
+            "Why did the developer go broke? Because he used up all his cache! 😄",
+            "Why don’t robots panic? Because they have nerves of steel 🤖",
+            "I asked the computer for a date... it said: 'No thanks, I’m already processing something!' 💻",
+            "Why do programmers hate nature? It has too many bugs 🐛",
+            "What’s a robot’s favorite snack? Microchips with dip! 😋",
+        ]
+    return jsonify({"message": random.choice(jokes)})
+
+    if "can we be friends" in user_lower:
+        return jsonify({"message": "Of course! I’m always here for a friendly chat."})
+
+    if "sing me a song" in user_lower:
+        return jsonify({"message": "🎵 I would if I could! But I can help you write song lyrics if you want!"})
+
+    if "what’s your favorite color" in user_lower or "what is your favorite color" in user_lower:
+        return jsonify({"message": "Probably electric blue… I am a digital assistant after all!"})
+
+    if "are you alive" in user_lower:
+        return jsonify({"message": "Not really, but I’m responsive and ready to help!"})
+
+    if "can you feel emotions" in user_lower:
+        return jsonify(
+            {"message": "I don’t have emotions like humans, but I’m designed to understand and respond kindly."})
+
+    if "say something funny" in user_message.lower():
+        return jsonify(
+            {"message": "I'm not a comedian, but I try! Why don’t robots panic? Because they have nerves of steel 🤖"})
+
+    if "do you have a name" in user_message.lower():
+        return jsonify({"message": "I go by many names, but you can just call me your HR Assistant 🤝"})
+
+    if "who made you" in user_message.lower():
+        return jsonify({"message": "I was created by a developer using Python, Flask, and a little AI magic!"})
+    if intent == "create_job":
+        return handle_create_job(user_message, session_id)
+    elif intent == "view_jobs":
+        return handle_view_jobs(user_message)
+    elif intent == "update_job":
+        return handle_update_job(user_message, session_id)
+    elif intent == "delete_job":
+        return handle_delete_job(user_message)
+    else:
+        # Fallback: search using Google Custom Search
+        search_result = search_google(user_message)
+        if search_result:
+            return jsonify({"message": search_result, "intent": "general_search"})
+        else:
+            return jsonify({"message": "Sorry, I didn't understand that. Can you rephrase it?"})
+
 
     if any(keyword in user_message.lower() for keyword in
            ["job for", "job title", "required skills", "description", "status is", "status:", "location", "languages"]):

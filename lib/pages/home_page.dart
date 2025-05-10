@@ -1,18 +1,30 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:resume_screening_system/pages/ChatScreen.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool showChatDrawer = false;
 
   void logout() {
     FirebaseAuth.instance.signOut();
   }
 
+  void toggleChat() {
+    setState(() {
+      showChatDrawer = !showChatDrawer;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isWideScreen = MediaQuery.of(context).size.width > 800;
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -21,7 +33,10 @@ class HomePage extends StatelessWidget {
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         actions: [
-          IconButton(onPressed: logout, icon: const Icon(Icons.logout)),
+          IconButton(
+            onPressed: logout,
+            icon: const Icon(Icons.logout),
+          ),
         ],
       ),
       body: Stack(
@@ -41,38 +56,52 @@ class HomePage extends StatelessWidget {
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
                       const SizedBox(height: 30),
-                      GridView.count(
-                        crossAxisCount: isWideScreen ? 4 : 2,
-                        shrinkWrap: true,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          AdCard(
-                            icon: Icons.add_box,
-                            title: "Add Job",
-                            subtitle: "Add new job post",
-                            onTap: () => Navigator.pushNamed(context, '/add_job'),
-                          ),
-                          AdCard(
-                            icon: Icons.list_alt,
-                            title: "Job List",
-                            subtitle: "View all job posts",
-                            onTap: () => Navigator.pushNamed(context, '/job_list'),
-                          ),
-                          AdCard(
-                            icon: Icons.people,
-                            title: "Candidate",
-                            subtitle: "List of applicants",
-                            onTap: () => Navigator.pushNamed(context, '/candidate_list_page'),
-                          ),
-                          AdCard(
-                            icon: Icons.bar_chart,
-                            title: "Report",
-                            subtitle: "View reports & stats",
-                            onTap: () => Navigator.pushNamed(context, '/report'),
-                          ),
-                        ],
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            int crossAxisCount;
+                            if (constraints.maxWidth >= 1000) {
+                              crossAxisCount = 4;
+                            } else if (constraints.maxWidth >= 600) {
+                              crossAxisCount = 2;
+                            } else {
+                              crossAxisCount = 1;
+                            }
+
+                            return GridView.count(
+                              crossAxisCount: crossAxisCount,
+                              crossAxisSpacing: 20,
+                              mainAxisSpacing: 20,
+                              childAspectRatio: 1.1,
+                              children: [
+                                AdCard(
+                                  icon: Icons.add_box,
+                                  title: "Add Job",
+                                  subtitle: "Add new job post",
+                                  onTap: () => Navigator.pushNamed(context, '/add_job'),
+                                ),
+                                AdCard(
+                                  icon: Icons.list_alt,
+                                  title: "Job List",
+                                  subtitle: "View all job posts",
+                                  onTap: () => Navigator.pushNamed(context, '/job_list'),
+                                ),
+                                AdCard(
+                                  icon: Icons.people,
+                                  title: "Candidate",
+                                  subtitle: "List of applicants",
+                                  onTap: () => Navigator.pushNamed(context, '/candidate_list_page'),
+                                ),
+                                AdCard(
+                                  icon: Icons.bar_chart,
+                                  title: "Report",
+                                  subtitle: "View reports & stats",
+                                  onTap: () => Navigator.pushNamed(context, '/report'),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -80,14 +109,21 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
-          // Floating button AI Chatbot (Right Bottom)
+          // Floating AI Chatbot button (bottom-right)
           Positioned(
             bottom: 20,
-            right: 20, // Updated to move to the right bottom
+            right: 20,
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/chatbot');  // Navigate to chatbot page
+                // Show the ChatScreen as a modal bottom sheet
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  builder: (context) => const ChatScreen(),  // Your ChatScreen widget
+                );
               },
               child: Container(
                 width: 65,

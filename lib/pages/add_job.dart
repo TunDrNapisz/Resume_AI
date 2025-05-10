@@ -104,13 +104,13 @@ class _AddJobPageState extends State<AddJobPage> {
             fillColor: Colors.grey[100],
           ),
           items: [
-            const DropdownMenuItem(value: 'Add Custom Skill', child: Text('Add Custom Skill')),
+            const DropdownMenuItem(value: 'Add New Skill', child: Text('Add New Skill')),
             ..._availableSkills.map((skill) => DropdownMenuItem(value: skill, child: Text(skill))),
           ],
           onChanged: (selectedSkill) {
             setState(() {
               _selectedSkill = selectedSkill;
-              if (selectedSkill == 'Add Custom Skill') {
+              if (selectedSkill == 'Add New Skill') {
                 _showCustomSkillInput();
               } else if (!_selectedSkills.contains(selectedSkill!)) {
                 _selectedSkills.add(selectedSkill);
@@ -143,10 +143,10 @@ class _AddJobPageState extends State<AddJobPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Enter Custom Skill'),
+        title: const Text('Enter New Skill'),
         content: TextField(
           controller: _customSkillController,
-          decoration: const InputDecoration(hintText: 'Custom Skill'),
+          decoration: const InputDecoration(hintText: 'New Skill'),
         ),
         actions: [
           TextButton(
