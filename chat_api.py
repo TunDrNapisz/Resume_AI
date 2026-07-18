@@ -17,8 +17,8 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Google Custom Search API
-GOOGLE_API_KEY = "AIzaSyCch1Z86by4Px4pHO-FSyINZ6W7yQmz9D4"
-GOOGLE_CX = "076127451f10646ba"
+GOOGLE_API_KEY = ""
+GOOGLE_CX = ""
 
 session_memory = {}
 
