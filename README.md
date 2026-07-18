@@ -39,8 +39,3 @@ This system helps recruiters screen resumes faster by combining local LLM infere
 
 Developed as a personal project (March 2025 - August 2025) to explore practical applications of LLMs and RAG in real-world recruitment workflows.
 
-## Author
-
-**Muhammad Naffiz Bin Sazali**
-Final-year AI student, Universiti Teknikal Malaysia Melaka (UTeM)
-📧 naffizsazali02@gmail.com | [LinkedIn](https://linkedin.com/in/muhammad-naffiz-sazali-7534a02aa)
